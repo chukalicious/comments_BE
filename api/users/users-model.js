@@ -5,10 +5,10 @@ const db = knex(config.development);
 module.exports = {
   get,
   getByID,
+  findBy,
   add,
   remove,
   update,
-  // findDogs,
 };
 
 function get() {
@@ -17,6 +17,10 @@ function get() {
 
 function getByID(id) {
   return db("users").where({ id }).first();
+}
+
+function findBy(filter) {
+  return db("users").where(filter);
 }
 
 function add(user) {
@@ -35,10 +39,3 @@ function remove(id) {
 function update(id, changes) {
   return db("users").where({ id }).update(changes, "*");
 }
-
-// function findDogs(adopterId) {
-//   return db("adopters as a")
-//     .join("dogs as d", "a.id", "d.adopter_id")
-//     .select("a.id", "a.name", "a.email", "d.id as dog_id", "d.name as dog_name")
-//     .where({ "a.id": adopterId });
-// }
