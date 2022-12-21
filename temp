@@ -1,0 +1,22 @@
+exports.seed = function (knex) {
+  // Deletes ALL existing entries
+  return knex("users")
+    .truncate()
+    .then(function () {
+      // Inserts seed entries
+      return knex("users").insert([
+        {
+          id: 1,
+          email: "gris@kat.com",
+          username: "Gris",
+          password: "12345678",
+        },
+        {
+          id: 2,
+          email: "al@mail.com",
+          username: "Alvaro",
+          password: "12345678",
+        },
+      ]);
+    });
+};
