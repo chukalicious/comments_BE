@@ -1,5 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
+const jwt = require("json-web-token");
 const Users = require("../users/users-model");
 const router = express.Router();
 
@@ -14,7 +15,9 @@ router.post("/", uniqueUser, async (req, res, next) => {
     const hash = bcrypt.hashSync(password, 12);
     const user = { email, username, password: hash };
     await Users.add(user);
-    res.status(201).json({ message: `You are now registered, ${username}` });
+    res
+      .status(201)
+      .json({ user, message: `You are now registered, ${username}!` });
   } catch (err) {
     next(err);
   }
@@ -25,13 +28,35 @@ router.post("/log", async (req, res) => {
   Users.findBy({ email })
     .first()
     .then((user) => {
-      if (user && bcrypt.compareSync(password, user.password)) {
-        res.status(200).json({ message: `Welcome` });
+      if (user) {
+        res.status(201).json({ message: "welcome!", token: 12345678 });
       } else {
         res.status(401).json({ message: "Invalid Credentials" });
       }
     })
-    .catch((err) => res.status(500).json(err));
+    .catch((err) => res.status(500).json({ message: "Server error", err }));
 });
+
+// if (user && bcrypt.compareSync(password, user.password)) {
+//   const payload = {
+//     sub: user.email,
+//     username: user.username,
+//   };
+//   const options = {
+//     expiresIn: 60,
+//   };
+
+//   const token = jwt.sign(
+//     payload,
+//     process.env.JWT_SECRET || "secret",
+//     options
+//   );
+
+//   res.status(200).json({ message: `Here is your token!`, token });
+
+//   } else {
+//     res.status(401).json({ message: "Invalid Credentials" });
+//   }
+// })
 
 module.exports = router;
