@@ -29,7 +29,12 @@ router.post("/log", async (req, res) => {
     .first()
     .then((user) => {
       if (user) {
-        res.status(201).json({ message: "welcome!", token: 12345678 });
+        res
+          .status(201)
+          .json({
+            message: `Welcome, ${user.username}!`,
+            token: user.password,
+          });
       } else {
         res.status(401).json({ message: "Invalid Credentials" });
       }
