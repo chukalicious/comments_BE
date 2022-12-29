@@ -5,7 +5,11 @@ const router = express.Router();
 router.get("/", (req, res) => {
   Comments.get()
     .then((comments) => {
-      res.status(200).json(comments);
+      if (comments) {
+        res.status(200).json(comments);
+      } else {
+        res.status(402).json({ message: "Could not retrieve conments" });
+      }
     })
     .catch((error) => {
       console.log(error);
