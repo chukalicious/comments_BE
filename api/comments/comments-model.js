@@ -15,8 +15,9 @@ function get() {
     .join("users as u", "c.user_id", "u.id")
     .select(
       "c.id",
+      "c.title",
       "c.comment",
-      "c.date",
+      "c.created_at",
       "c.points",
       "u.username",
       "u.avatar"
