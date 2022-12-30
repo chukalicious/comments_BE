@@ -11,7 +11,9 @@ module.exports = {
 };
 
 function get() {
-  return db("comments");
+  return db("comments as c")
+    .join("users as u", "c.user_id", "u.id")
+    .select("c.id", "c.comment", "c.date", "c.points", "u.username");
 }
 
 function getByID(id) {
