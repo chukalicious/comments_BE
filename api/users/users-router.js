@@ -32,27 +32,15 @@ router.get("/:id", (req, res) => {
     });
 });
 
-router.get("/api/adopters/:id/dogs", (req, res) => {
-  Users.findDogs(req.params.id)
-    .then((dogs) => {
-      if (dogs.length > 0) {
-        res.status(200).json(dogs);
-      } else {
-        res.status(404).json({ message: "No dogs for this adopter" });
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(500).json({
-        message: "Error retrieving the dogs for this adopter",
-      });
-    });
-});
-
 router.post("/", (req, res) => {
   Users.add(req.body)
     .then((user) => {
-      res.status(201).json(user);
+      if (user.avatar) {
+        res.status(201).json(user);
+        console.log("nice, complete profile subimission!");
+      } else {
+        res.status(402).json({ message: "missing avatar, try again" });
+      }
     })
     .catch((error) => {
       console.log(error);
@@ -66,7 +54,7 @@ router.delete("/:id", (req, res) => {
   Users.remove(req.params.id)
     .then((count) => {
       if (count > 0) {
-        res.status(200).json({ message: "The user has been nuked" });
+        res.status(200).json({ message: "The user has been deleted" });
       } else {
         res.status(404).json({ message: "The user could not be found" });
       }
@@ -74,7 +62,7 @@ router.delete("/:id", (req, res) => {
     .catch((error) => {
       console.log(error);
       res.status(500).json({
-        message: "Error removing the adopter",
+        message: "Error removing the user",
       });
     });
 });

@@ -5,6 +5,7 @@ exports.up = function (knex) {
       tbl.string("email").notNullable().unique();
       tbl.string("username").unique();
       tbl.string("password").notNullable();
+      tbl.text("avatar");
     })
     .createTable("comments", (tbl) => {
       tbl.increments();
