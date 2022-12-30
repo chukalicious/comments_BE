@@ -9,8 +9,12 @@ exports.up = function (knex) {
     })
     .createTable("comments", (tbl) => {
       tbl.increments();
+      tbl.string("title").notNullable();
       tbl.text("comment").notNullable();
-      tbl.date("date").notNullable();
+      tbl
+        .timestamp("created_at", { precision: 6 })
+        .defaultTo(knex.fn.now(6))
+        .notNullable();
       tbl.integer("points").notNullable();
       tbl
         .integer("user_id")
