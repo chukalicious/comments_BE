@@ -39,7 +39,11 @@ router.get("/:id", (req, res) => {
 router.post("/", (req, res) => {
   Comments.add(req.body)
     .then((comment) => {
-      res.status(201).json(comment);
+      if (comment) {
+        res.status(201).json(comment);
+      } else {
+        res.status(402).json({ message: "Bad request" });
+      }
     })
     .catch((error) => {
       console.log(error);

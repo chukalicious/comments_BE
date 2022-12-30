@@ -21,7 +21,8 @@ function get() {
       "c.points",
       "u.username",
       "u.avatar"
-    );
+    )
+    .orderBy("c.id");
 }
 
 function getByID(id) {
