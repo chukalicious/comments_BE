@@ -35,11 +35,14 @@ router.get("/:id", (req, res) => {
 router.post("/", (req, res) => {
   Users.add(req.body)
     .then((user) => {
-      if (user.avatar) {
+      if (user.email && user.password && user.username) {
         res.status(201).json(user);
         console.log("nice, complete profile subimission!");
       } else {
-        res.status(402).json({ message: "missing avatar, try again" });
+        res.status(402).json({
+          message:
+            "You must include and email address, choose a password and a username, please. ",
+        });
       }
     })
     .catch((error) => {

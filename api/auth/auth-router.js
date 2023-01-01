@@ -8,6 +8,7 @@ const uniqueUser = (req, res, next) => {
   next();
 };
 
+// Register //
 router.post("/", uniqueUser, async (req, res, next) => {
   try {
     const { email, password, username } = req.body;
@@ -23,6 +24,7 @@ router.post("/", uniqueUser, async (req, res, next) => {
   }
 });
 
+// Login //
 router.post("/log", async (req, res) => {
   let { email, password } = req.body;
   Users.findBy({ email })
@@ -31,6 +33,8 @@ router.post("/log", async (req, res) => {
       if (user) {
         res.status(201).json({
           message: `Welcome, ${user.username}!`,
+          userId: user.id,
+          username: user.username,
           token: user.password,
         });
       } else {
