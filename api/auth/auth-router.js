@@ -34,34 +34,26 @@ router.post(
 );
 
 // Login /////////
-router.post("/login/log", async (req, res, next) => {
+router.post("/login/log", async (req, res) => {
   const { email, password } = req.body;
 
-  // this line below initializing the hash was missing,
-  // which was preventing the compareSync from working.
-  // note how it is now as the second argument in the
-  // compareHash function. So, I need it in the register
-  //  function, as well as the login function.
-  ///////////////  NOPE!  ////////////////////
-  // this was incorrect, I still have aproblem
-  const hash = bcrypt.hashSync(password, 10);
-
   try {
-    console.log(email);
-    const user = await Users.findBy({ email });
+    // This line below was my problem. I needed to add the .first()
+    const user = await Users.findBy({ email }).first();
 
     if (user == null) {
       next({ status: 401, message: "Invalid Credentials" });
       return;
     }
     console.log("user: ", user);
-    if (bcrypt.compareSync(password, hash)) {
+    if (bcrypt.compareSync(password, user.password)) {
       res.json({ message: `You are now logged in, ${email}` });
     } else {
-      next({ status: 401, message: "Invalid Credentials" });
+      res.status(401).json({ message: "Invalid Credentials" });
     }
   } catch (err) {
-    next(err);
+    console.log(err);
+    res.status(500).json({ message: "Server Error", err });
   }
 });
 
