@@ -42,6 +42,8 @@ router.post("/login/log", async (req, res, next) => {
   // note how it is now as the second argument in the
   // compareHash function. So, I need it in the register
   //  function, as well as the login function.
+  ///////////////  NOPE!  ////////////////////
+  // this was incorrect, I still have aproblem
   const hash = bcrypt.hashSync(password, 10);
 
   try {
