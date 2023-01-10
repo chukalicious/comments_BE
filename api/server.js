@@ -1,5 +1,4 @@
 const express = require("express");
-const bcrypt = require("bcryptjs");
 const helmet = require("helmet");
 const cors = require("cors");
 
@@ -14,8 +13,8 @@ server.use(helmet());
 server.use(cors());
 
 server.use("/users", UsersRouter);
-server.use("/users/signup", AuthRouter);
-server.use("/users/login", AuthRouter);
+server.use("/api", AuthRouter);
+server.use("/api", AuthRouter);
 server.use("/comments", CommentsRouter);
 
 module.exports = server;

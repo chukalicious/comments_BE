@@ -1,5 +1,5 @@
 const express = require("express");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const jwt = require("json-web-token");
 const Users = require("../users/users-model");
 const router = express.Router();
@@ -9,61 +9,58 @@ const uniqueUser = (req, res, next) => {
 };
 
 // Register ////////
-router.post("/", uniqueUser, async (req, res, next) => {
+router.post(
+  "/signup",
+  // uniqueUser,
+  async (req, res, next) => {
+    let user = req.body;
+    const hash = bcrypt.hashSync(user.password, 10);
+
+    user.password = hash;
+    try {
+      const saved = await Users.add(user);
+      res
+        .status(201)
+        .json({ message: `You are now registered, ${user.username}!`, saved });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        message: "Could not create user",
+        detail: err.detail,
+        table: `In ${err.table} table`,
+      });
+    }
+  }
+);
+
+// Login /////////
+router.post("/login/log", async (req, res, next) => {
+  const { email, password } = req.body;
+
+  // this line below initializing the hash was missing,
+  // which was preventing the compareSync from working.
+  // note how it is now as the second argument in the
+  // compareHash function. So, I need it in the register
+  //  function, as well as the login function.
+  const hash = bcrypt.hashSync(password, 10);
+
   try {
-    const { email, password, username } = req.body;
-    console.log(req.body);
-    const hash = bcrypt.hashSync(password, 12);
-    const user = { email, username, password: hash };
-    await Users.add(user);
-    res
-      .status(201)
-      .json({ user, message: `You are now registered, ${username}!` });
+    console.log(email);
+    const user = await Users.findBy({ email });
+
+    if (user == null) {
+      next({ status: 401, message: "Invalid Credentials" });
+      return;
+    }
+    console.log("user: ", user);
+    if (bcrypt.compareSync(password, hash)) {
+      res.json({ message: `You are now logged in, ${email}` });
+    } else {
+      next({ status: 401, message: "Invalid Credentials" });
+    }
   } catch (err) {
     next(err);
   }
 });
-
-// Login /////////
-router.post("/log", async (req, res) => {
-  let { email, password } = req.body;
-  Users.findBy({ email })
-    .first()
-    .then((user) => {
-      if (user) {
-        res.status(201).json({
-          message: `Welcome, ${user.username}!`,
-          userId: user.id,
-          username: user.username,
-          token: user.password,
-        });
-      } else {
-        res.status(401).json({ message: "Invalid Credentials" });
-      }
-    })
-    .catch((err) => res.status(500).json({ message: "Server error", err }));
-});
-
-// if (user && bcrypt.compareSync(password, user.password)) {
-//   const payload = {
-//     sub: user.email,
-//     username: user.username,
-//   };
-//   const options = {
-//     expiresIn: 60,
-//   };
-
-//   const token = jwt.sign(
-//     payload,
-//     process.env.JWT_SECRET || "secret",
-//     options
-//   );
-
-//   res.status(200).json({ message: `Here is your token!`, token });
-
-//   } else {
-//     res.status(401).json({ message: "Invalid Credentials" });
-//   }
-// })
 
 module.exports = router;

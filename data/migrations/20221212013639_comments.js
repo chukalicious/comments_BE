@@ -4,7 +4,7 @@ exports.up = function (knex) {
       tbl.increments("id");
       tbl.string("email").notNullable().unique();
       tbl.string("username").unique();
-      tbl.string("password").notNullable();
+      tbl.string("password", 256).notNullable();
       tbl.text("avatar");
     })
     .createTable("comments", (tbl) => {
