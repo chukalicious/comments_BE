@@ -12,7 +12,7 @@ const uniqueUser = (req, res, next) => {
 router.post(
   "/signup",
   // uniqueUser,
-  async (req, res, next) => {
+  async (req, res) => {
     let user = req.body;
     const hash = bcrypt.hashSync(user.password, 10);
 
@@ -42,7 +42,7 @@ router.post("/login/log", async (req, res) => {
     const user = await Users.findBy({ email }).first();
 
     if (user == null) {
-      next({ status: 401, message: "Invalid Credentials" });
+      res.status(401).json({ status: 401, message: "Invalid Credentials" });
       return;
     }
     console.log("user: ", user);
